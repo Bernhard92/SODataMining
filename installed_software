@@ -1,0 +1,5 @@
+Installierte Software:
+	python readability library: 
+		pip install https://github.com/andreasvc/readability/tarball/master
+	
+	mySQL Database connector
