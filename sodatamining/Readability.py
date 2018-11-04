@@ -23,5 +23,9 @@ class Readability:
     def get_post_from_db(self, id):
         self.dbConnection.get_post_with_id(id)
     
+
+    def get_score_of_post(self, post):
+
+		
         
     
