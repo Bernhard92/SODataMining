@@ -42,10 +42,12 @@ class DBConnection:
         finally:
             cursor.close()
                
-            
-            
+    def store_readability_score(self, id, score):
+        print("")
+        
+    def get_number_of_posts(self):
+        return 10
+        
     def close_connection(self):
         self.conn.close() 
         
-        
-             
