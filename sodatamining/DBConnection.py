@@ -7,7 +7,6 @@ import base64
 import mysql.connector
 from mysql.connector import Error
 
-print mysql.connector.paramstyle
 
 class DBConnection:
         
@@ -22,7 +21,7 @@ class DBConnection:
                                            user='root',
                                            password = self.get_db_password())
             if conn.is_connected():
-                print('Connected to MySQL database')
+                print 'Connected to MySQL database'
             return conn
         except Error as e:
             print(e)
@@ -42,8 +41,45 @@ class DBConnection:
             cursor.close()
             return result
                
-    def store_readability_score(self, id_, score):
-        print("")
+    def store_readability_metrics(self, id_, metrics):
+        """ Stores the calculated metrics directly in the posts table """
+        try:
+            cursor = self.conn.cursor()
+            query = """ UPDATE `python_db`.`posts` 
+                        SET
+                        `kincaid` = %s 
+                        `ari` = %s
+                        `coleman_liau` = %s 
+                        `flesch_reading_ease` = %s
+                        `gunning_fog_index` = %s
+                        `lix` = %s
+                        `smog_index` = %s
+                        `rix` = %s
+                        WHERE `id` = %s """
+            
+            """TODO: Round values"""
+                
+            data = (
+                metrics['readability grades']['Kincaid'],
+                metrics['readability grades']['ARI'],
+                metrics['readability grades']['Coleman-Liau'], 
+                metrics['readability grades']['FleschReadingEase'],
+                metrics['readability grades']['GunningFogIndex'],
+                metrics['readability grades']['LIX'],
+                metrics['readability grades']['SMOGIndex'],
+                metrics['readability grades']['RIX'],                
+                id_)
+            
+            cursor.execute(query, data)
+            
+            #accept the changes
+            self.conn.commit()
+            
+        except Error as e:
+            print(e)
+        
+        finally:
+            cursor.close()
         
     def get_number_of_posts(self):
         """ Gets number of posts in table """
