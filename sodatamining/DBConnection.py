@@ -10,15 +10,17 @@ from mysql.connector import Error
 
 class DBConnection:
         
-    def __init__(self):
+    def __init__(self, db_name="python_db"):
+        self.db_name = db_name
         self.conn = self.connect()
+        
          
     def connect(self):
         """ Connect to MySQL database """
         try:
-            conn = mysql.connector.connect(host='localhost',
-                                           database='python_db',
-                                           user='root',
+            conn = mysql.connector.connect(host ='localhost',
+                                           database = self.db_name,
+                                           user ='root',
                                            password = self.get_db_password())
             if conn.is_connected():
                 print 'Connected to MySQL database'
@@ -31,7 +33,7 @@ class DBConnection:
         """ Gets the hole post entry form the posts table """
         try:
             cursor = self.conn.cursor()
-            cursor.execute("SELECT text FROM python_db.posts WHERE `id` = " + str(id_) + ";")
+            cursor.execute("SELECT text FROM " + self.db_name + ".posts WHERE `id` = " + str(id_) + ";")
             result = cursor.fetchone()
      
         except Error as e:
@@ -45,29 +47,25 @@ class DBConnection:
         """ Stores the calculated metrics directly in the posts table """
         try:
             cursor = self.conn.cursor()
-            query = """ UPDATE `python_db`.`posts` 
+            query = """ UPDATE `posts` 
                         SET
-                        `kincaid` = %s 
-                        `ari` = %s
-                        `coleman_liau` = %s 
-                        `flesch_reading_ease` = %s
-                        `gunning_fog_index` = %s
-                        `lix` = %s
-                        `smog_index` = %s
-                        `rix` = %s
-                        WHERE `id` = %s """
-            
-            """TODO: Round values"""
-                
+                        `kincaid` = %s, 
+                        `ari` = %s,
+                        `coleman_liau` = %s, 
+                        `flesch_reading_ease` = %s,
+                        `gunning_fog_index` = %s,
+                        `smog_index` = %s,
+                        `dale_chall` = %s
+                        WHERE `id` = %s; """
+                            
             data = (
                 metrics['readability grades']['Kincaid'],
                 metrics['readability grades']['ARI'],
                 metrics['readability grades']['Coleman-Liau'], 
                 metrics['readability grades']['FleschReadingEase'],
                 metrics['readability grades']['GunningFogIndex'],
-                metrics['readability grades']['LIX'],
-                metrics['readability grades']['SMOGIndex'],
-                metrics['readability grades']['RIX'],                
+                metrics['readability grades']['SMOGIndex'],     
+                metrics['readability grades']['DaleChallIndex'],        
                 id_)
             
             cursor.execute(query, data)
@@ -85,7 +83,7 @@ class DBConnection:
         """ Gets number of posts in table """
         try: 
             cursor = self.conn.cursor()
-            cursor.execute("SELECT COUNT(1) FROM python_db.posts;")
+            cursor.execute("SELECT COUNT(1) FROM " + self.db_name + ".posts;")
             result = cursor.fetchone()
         except Error as e: 
             print(e)

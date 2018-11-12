@@ -23,13 +23,12 @@ class Readability:
             #Stores the metrics in the database
             self.store_readability_metrics(id_, results)
             
-            
-        
  
     def get_text_from_post(self, id_):
         """ Gets the text of the post in a tuple
             and returns only the text as string """
         return self._dbConnection.get_post_text_with_id(id_)[0]
+    
     
     def calc_metrics_of_post(self, text):
         """ Returns a dictionary of measurements
@@ -42,9 +41,11 @@ class Readability:
         print("Calculating the metrics of: " + text)
         return readability.getmeasures(unicode(text), lang='en')
     
+    
     def number_db_entries(self):
         """Get Number of entries form post table"""
         return self._dbConnection.get_number_of_posts()[0]
+    
     
     def store_readability_metrics(self, id_, results):
         self._dbConnection.store_readability_metrics(id_, results)
@@ -56,10 +57,8 @@ class Readability:
         print"Coleman-Liau: ", results['readability grades']['Coleman-Liau']
         print"Flesch reading ease: ", results['readability grades']['FleschReadingEase']
         print"Gunning Fog Index: ", results['readability grades']['GunningFogIndex']
-        print"LIX: ", results['readability grades']['LIX']
         print"SMOG Index: ", results['readability grades']['SMOGIndex']
-        print"RIX: ", results['readability grades']['RIX'], "\n"
-        
+        print"Dale-Chall: ", results['readability grades']['DaleChallIndex'], "\n" 
         
         
         
