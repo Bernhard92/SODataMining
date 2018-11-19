@@ -6,6 +6,7 @@ Created on 3 Nov 2018
 import base64
 import mysql.connector
 from mysql.connector import Error
+from bsddb.test.test_all import cursor_py3k
 
 
 class DBConnection:
@@ -28,6 +29,11 @@ class DBConnection:
         except Error as e:
             print(e)
      
+    
+    """ 
+        readability measurements 
+    
+    """
         
     def get_post_text_with_id(self, id_):
         """ Gets the hole post entry form the posts table """
@@ -91,7 +97,19 @@ class DBConnection:
             cursor.close()
             return result
             
-        
+    """
+    Load data from Google BigQuery
+    """
+    
+    
+
+    
+    
+    
+    
+    """
+    operational stuff
+    """
     def close_connection(self):
         self.conn.close() 
         
