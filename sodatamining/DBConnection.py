@@ -26,30 +26,7 @@ class DBConnection:
             return conn
         except Error as e:
             print e 
-    
-    """ 
-        readability measurements 
-    
-    """
-
-    def get_id_content_from_postblockversion(self):
-        """ Gets the hole post entry form the posts table """
-        try:
-            query = """ SELECT id, content FROM 
-                    """ + self.db_name + """.postblockversion
-                    WHERE PostBlockTypeId = 1"""
             
-            cursor = self.conn.cursor()
-            cursor.execute(query)
-            result = cursor.fetchall()
-     
-        except Error as e:
-            print e
-            
-        finally:
-            cursor.close()
-            return result
-               
     def store_readability_metrics(self, id_, table, metrics):
         """ Stores the calculated metrics directly in the given table """
         try:
@@ -97,8 +74,32 @@ class DBConnection:
             cursor.close()
             return result
     
+    """ 
+        PostBlockVersion readability
+    
     """
-    posthistory stuff
+
+    def get_id_content_from_postblockversion(self):
+        """ Gets the hole post entry form the posts table """
+        try:
+            query = """ SELECT id, content FROM 
+                    """ + self.db_name + """.postblockversion
+                    WHERE PostBlockTypeId = 1"""
+            
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+     
+        except Error as e:
+            print e
+            
+        finally:
+            cursor.close()
+            return result
+    
+    """
+        posthistory readability
+    
     """
 
     def get_ids_from_posthistory(self):
@@ -106,8 +107,8 @@ class DBConnection:
         
         query = """SELECT id 
                 FROM posthistory
-                order by id
-                Limit 10"""
+                order by id"""
+                
         try: 
             cursor = self.conn.cursor()
             cursor.execute(query)
@@ -128,7 +129,7 @@ class DBConnection:
         try: 
             cursor = self.conn.cursor()
             cursor.execute(query)
-            result = cursor.fetchall()()
+            result = cursor.fetchall()
         except Error as e: 
             print e 
         finally:
@@ -136,7 +137,46 @@ class DBConnection:
             return result
         
     """
-    operational stuff
+        Post readability
+        
+    """
+    
+    def get_most_recent_score(self):
+        """Gets the readability score of the most recent 
+        posthistory entry"""
+        
+        query = """SELECT a.postid, a.kincaid, a.ari, 
+                    a.coleman_liau, a.flesch_reading_ease, 
+                    a.gunning_fog_index, a.smog_index, a.dale_chall
+                FROM posthistory a
+                WHERE a.PostHistoryTypeId IN (2, 5, 8)
+                AND a.creationDate = 
+                    (Select max(b.CreationDate)
+                    FROM posthistory b 
+                    WHERE b.postid = a.postid
+                    AND PostHistoryTypeId IN (2, 5, 8)
+                )
+                GROUP BY postid;
+                """
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            return result      
+        
+    """Post sentiment """
+    
+    def get_text_from_post(self):
+        """ """
+        
+            
+    """
+        Operational stuff
+        
     """
 
     def close_connection(self):
@@ -146,6 +186,40 @@ class DBConnection:
         log_in_file = open("../.login_data")
         return log_in_file.readline()
     
+    def add_readability_columns(self, table):
+        """Adds columns for readability metrics to existing posts table"""
+        try:
+            cursor = self.conn.cursor(); 
+            query = """ ALTER TABLE """ + table + """ 
+                        ADD COLUMN `kincaid`                 FLOAT(10),
+                        ADD COLUMN `ari`                     FLOAT(10) AFTER `kincaid`,
+                        ADD COLUMN `coleman_liau`             FLOAT(10) AFTER `ari`,
+                        ADD COLUMN `flesch_reading_ease`     FLOAT(10) AFTER `coleman_liau`,
+                        ADD COLUMN `gunning_fog_index`         FLOAT(10) AFTER `flesch_reading_ease`,  
+                        ADD COLUMN `smog_index`             FLOAT(10) AFTER `gunning_fog_index`, 
+                        ADD COLUMN `dale_chall`             FLOAT(10) AFTER `smog_index`; """
+            cursor.execute(query)
+            self.conn.commit()
+        except Error as e:
+            print e
+        finally:
+            cursor.close()
+            
+    def add_sentiment_coumns(self, table):
+        try:
+            cursor = self.conn.cursor(); 
+            query = """ ALTER TABLE """ + table + """ 
+                        ADD COLUMN `neg`        FLOAT(10),
+                        ADD COLUMN `neu`        FLOAT(10) AFTER `neg`,
+                        ADD COLUMN `pos`        FLOAT(10) AFTER `neu`,
+                        ADD COLUMN `compound`   FLOAT(10) AFTER `pos`; """
+            cursor.execute(query)
+            self.conn.commit()
+        except Error as e:
+            print e
+        finally:
+            cursor.close()
+            
     def create_indices(self):
         query = """USE `sotorrent18_09`;
         CREATE INDEX `comments_index_1` ON Comments(UserId);
@@ -189,25 +263,6 @@ class DBConnection:
             cursor.execute(query)
         except Error as e: 
             print e 
-        finally:
-            cursor.close()
-    
-    def add_readability_columns(self, table):
-        """Adds columns for readability metrics to existing posts table"""
-        try:
-            cursor = self.conn.cursor(); 
-            query = """ ALTER TABLE """ + table + """ 
-                        ADD COLUMN `kincaid`                 FLOAT(10),
-                        ADD COLUMN `ari`                     FLOAT(10) AFTER `kincaid`,
-                        ADD COLUMN `coleman_liau`             FLOAT(10) AFTER `ari`,
-                        ADD COLUMN `flesch_reading_ease`     FLOAT(10) AFTER `coleman_liau`,
-                        ADD COLUMN `gunning_fog_index`         FLOAT(10) AFTER `flesch_reading_ease`,  
-                        ADD COLUMN `smog_index`             FLOAT(10) AFTER `gunning_fog_index`, 
-                        ADD COLUMN `dale_chall`             FLOAT(10) AFTER `smog_index`; """
-            cursor.execute(query)
-            self.conn.commit()
-        except Error as e:
-            print e
         finally:
             cursor.close()
         
