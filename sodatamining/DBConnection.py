@@ -84,7 +84,8 @@ class DBConnection:
         try:
             query = """ SELECT id, content FROM 
                     """ + self.db_name + """.postblockversion
-                    WHERE PostBlockTypeId = 1"""
+                    WHERE PostBlockTypeId = 1;
+                    """
             
             cursor = self.conn.cursor()
             cursor.execute(query)
@@ -107,7 +108,7 @@ class DBConnection:
         
         query = """SELECT id 
                 FROM posthistory
-                order by id"""
+                order by id;"""
                 
         try: 
             cursor = self.conn.cursor()
@@ -168,12 +169,239 @@ class DBConnection:
             cursor.close()
             return result      
         
-    """Post sentiment """
+    """
+        Post sentiment 
     
-    def get_text_from_post(self):
-        """ """
-        
+    """
+
+    def store_sentiment(self, id_, table, sentiment):
+        try:
+            cursor = self.conn.cursor()
+            query = """ UPDATE """ + table + """  
+                        SET
+                        `neg` = %s, 
+                        `neu` = %s,
+                        `pos` = %s, 
+                        `compound` = %s
+                        WHERE `id` = %s; """
+                            
+            data = (
+                sentiment['neg'],
+                sentiment['neu'],
+                sentiment['pos'],
+                sentiment['compound'],
+                id_)
             
+            cursor.execute(query, data)
+            # accept the changes
+            self.conn.commit()
+            
+        except Error as e:
+            print e 
+        
+        finally:
+            cursor.close()
+
+    def get_most_recent_sentiment(self):
+        """Gets the sentiment score of the most recent 
+        posthistory entry"""
+        
+        query = """SELECT a.postid, a.neg, a.neu, 
+                    a.pos, a.compound
+                FROM posthistory a
+                WHERE a.PostHistoryTypeId IN (2, 5, 8)
+                AND a.creationDate = 
+                    (Select max(b.CreationDate)
+                    FROM posthistory b 
+                    WHERE b.postid = a.postid
+                    AND PostHistoryTypeId IN (2, 5, 8)
+                )
+                GROUP BY postid;
+                """
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            return result     
+        
+    def get_comment_text(self):
+        query = """SELECT id, text
+                FROM comments;"""
+            
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            return result 
+
+    """
+    Code Evolution
+    
+    """
+    def get_ids_from_postblockversion(self):
+        query = """SELECT id
+                FROM postblockversion
+                order by id;
+                """
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            return result 
+    
+    def get_postblock_value(self, id_):
+        """gets the desired metrics from the entry 
+        with the given id"""
+        
+        query = """SELECT posthistoryid, id, 
+                        predpostblockversionid, 
+                        flesch_reading_ease, 
+                        gunning_fog_index, 
+                        neg, neu, pos, compound 
+                FROM postblockversion
+                WHERE id = """ + id_
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            return result 
+        
+    def get_posthistory_value(self, id_):
+        """gets the desired metrics from the entry 
+        with the given id"""
+        
+        query = """SELECT  null as placeholder, 
+                        h.id, v.PredPostHistoryId,
+                        h.flesch_reading_ease, h.gunning_fog_index, 
+                        h.neg, h.neu, h.pos, h.compound
+                    FROM posthistory h, postversion v
+                    WHERE h.id = v.PosthistoryId
+                    AND h.id = """ + id_
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            return result 
+        
+    def get_predposthistory_value(self, id_):
+        """gets the desired metrics from the entry 
+        with the given id"""
+        
+        #Im askiing for the id twice because
+        #i want to have the same structure as above
+        query = """SELECT  null as placeholder, null as placeholder2,
+                    id, flesch_reading_ease, 
+                    gunning_fog_index, neg, neu, pos, compound
+                    from posthistory
+                    where id = """ + id_
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            return result 
+        
+    def insert_postblockevolution_entry(self, values):
+        query = """ INSERT INTO 'sotorrent18_09'.'postblockevolution'
+                (
+                `PostHistoryId`,
+                `ChangeType`,
+                `PostBlockId`,
+                `PredPostBlockId`,
+                `ValueOld`,
+                `ValueNew`)
+                VALUES
+                (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s);"""
+                            
+        data = (
+            values['posthistoryid'], 
+            values['changetype'],
+            values['postblockid'],
+            values['predpostblockid'],
+            values['valuenew'],
+            values['valueold']
+            )
+            
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query, data)
+            # accept the changes
+            self.conn.commit()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            
+    def insert_posthistoryevolution_entry(self, values):
+        query = """ INSERT INTO 'sotorrent18_09'.'posthistoryevolution'
+                (
+                `PostHistoryId`,
+                `ChangeType`,
+                `PostBlockId`,
+                `PredPostBlockId`,
+                `ValueOld`,
+                `ValueNew`)
+                VALUES
+                (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s);"""
+                            
+        data = (
+            values['posthistoryid'], 
+            values['changetype'],
+            values['postblockid'],
+            values['predpostblockid'],
+            values['valuenew'],
+            values['valueold']
+            )
+            
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query, data)
+            # accept the changes
+            self.conn.commit()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+    
     """
         Operational stuff
         
@@ -205,9 +433,9 @@ class DBConnection:
         finally:
             cursor.close()
             
-    def add_sentiment_coumns(self, table):
+    def add_sentiment_columns(self, table):
         try:
-            cursor = self.conn.cursor(); 
+            cursor = self.conn.cursor() 
             query = """ ALTER TABLE """ + table + """ 
                         ADD COLUMN `neg`        FLOAT(10),
                         ADD COLUMN `neu`        FLOAT(10) AFTER `neg`,
@@ -265,4 +493,26 @@ class DBConnection:
             print e 
         finally:
             cursor.close()
+        
+    def create_evolution_tables(self):
+        # Open and read the file as a single buffer
+        fd = open('../MySQL/create_evolution_tables.sql', 'r')
+        sqlFile = fd.read()
+        fd.close()
+        
+        # all SQL commands (split on ';')
+        sqlCommands = sqlFile.split(';')
+
+        # Execute every command from the input file
+        for command in sqlCommands:
+            try:
+                cursor = self.conn.cursor(); 
+                cursor.execute(command)
+                self.conn.commit()
+            except Error as e:
+                print e
+            finally:
+                cursor.close()
+                    
+        
         

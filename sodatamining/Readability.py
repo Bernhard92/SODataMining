@@ -131,7 +131,6 @@ class Readability:
                        }
         
    
-            #metrics = ['readability grades'][result[1:]]
             #store in posts table
             #print id_
             #print metrics
