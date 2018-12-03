@@ -23,7 +23,7 @@ class Sentiment(object):
         self.commentsAltered = True
         
         # calculates sentiment score of all text blocks
-        self.postblockversion_sentiment()
+        #self.postblockversion_sentiment()
         
         # calculates sentiment score of text blocks from history entries
         #self.posthistory_sentiment()

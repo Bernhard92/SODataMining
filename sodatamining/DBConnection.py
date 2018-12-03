@@ -117,8 +117,9 @@ class DBConnection:
         except Error as e: 
             print e 
         finally:
-            return result
             cursor.close()
+            return result
+            
         
     def get_content_from_posthistory(self, phId):
         query = """SELECT v.content
@@ -246,6 +247,22 @@ class DBConnection:
     Code Evolution
     
     """
+    def get_posthistoryid_from_texttype(self):        
+        query = """SELECT id 
+                FROM posthistory
+                WHERE posthistorytypeid IN (2,5,8)
+                order by id;"""
+                
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            cursor.close()
+            return result
+        
     def get_ids_from_postblockversion(self):
         query = """SELECT id
                 FROM postblockversion
@@ -255,7 +272,7 @@ class DBConnection:
         try: 
             cursor = self.conn.cursor()
             cursor.execute(query)
-            result = cursor.fetchall()()
+            result = cursor.fetchall()
         except Error as e: 
             print e 
         finally:
@@ -272,7 +289,7 @@ class DBConnection:
                         gunning_fog_index, 
                         neg, neu, pos, compound 
                 FROM postblockversion
-                WHERE id = """ + id_
+                WHERE id = """ + str(id_)
              
         try: 
             cursor = self.conn.cursor()
@@ -294,7 +311,7 @@ class DBConnection:
                         h.neg, h.neu, h.pos, h.compound
                     FROM posthistory h, postversion v
                     WHERE h.id = v.PosthistoryId
-                    AND h.id = """ + id_
+                    AND h.id = """ + str(id_)
              
         try: 
             cursor = self.conn.cursor()
@@ -316,7 +333,7 @@ class DBConnection:
                     id, flesch_reading_ease, 
                     gunning_fog_index, neg, neu, pos, compound
                     from posthistory
-                    where id = """ + id_
+                    where id = """ + str(id_)
              
         try: 
             cursor = self.conn.cursor()
@@ -329,14 +346,15 @@ class DBConnection:
             return result 
         
     def insert_postblockevolution_entry(self, values):
-        query = """ INSERT INTO 'sotorrent18_09'.'postblockevolution'
+        
+        query = """ INSERT INTO `sotorrent18_09`.`postblockevolution`
                 (
                 `PostHistoryId`,
                 `ChangeType`,
                 `PostBlockId`,
                 `PredPostBlockId`,
-                `ValueOld`,
-                `ValueNew`)
+                `ValueNew`,
+                `ValueOld`)
                 VALUES
                 (
                 %s,
@@ -366,17 +384,15 @@ class DBConnection:
             cursor.close()
             
     def insert_posthistoryevolution_entry(self, values):
-        query = """ INSERT INTO 'sotorrent18_09'.'posthistoryevolution'
+        query = """ INSERT INTO `sotorrent18_09`.`posthistoryevolution`
                 (
-                `PostHistoryId`,
                 `ChangeType`,
-                `PostBlockId`,
-                `PredPostBlockId`,
-                `ValueOld`,
-                `ValueNew`)
+                `PostHistoryId`,
+                `PredPostHistoryId`,
+                `ValueNew`,
+                `ValueOld`)
                 VALUES
                 (
-                %s,
                 %s,
                 %s,
                 %s,
@@ -384,10 +400,9 @@ class DBConnection:
                 %s);"""
                             
         data = (
-            values['posthistoryid'], 
             values['changetype'],
-            values['postblockid'],
-            values['predpostblockid'],
+            values['posthistoryid'],
+            values['predposthistoryid'],
             values['valuenew'],
             values['valueold']
             )
