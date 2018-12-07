@@ -264,8 +264,15 @@ class DBConnection:
             return result
         
     def get_ids_from_postblockversion(self):
-        query = """SELECT id
-                FROM postblockversion
+        query = """SELECT  a.id
+                FROM postblockversion a, postblockversion b
+                where a.postblocktypeid = 1
+                and a.gunning_fog_index is not null
+                and a.flesch_reading_ease is not null
+                and a.PredPostBlockVersionId = b.Id
+                and b.postblocktypeid = 1
+                and b.gunning_fog_index is not null
+                and b.flesch_reading_ease is not null
                 order by id;
                 """
              
@@ -327,7 +334,7 @@ class DBConnection:
         """gets the desired metrics from the entry 
         with the given id"""
         
-        #Im askiing for the id twice because
+        #I'm asking for the id twice because
         #i want to have the same structure as above
         query = """SELECT  null as placeholder, null as placeholder2,
                     id, flesch_reading_ease, 

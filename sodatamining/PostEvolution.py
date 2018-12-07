@@ -12,11 +12,11 @@ class PostEvolution:
         
         # calculates and writes the evolutionary steps of the 
         # post blocks into postblockevolution 
-        #self.postblock_evolution()
+        self.postblock_evolution()
         
         # calculates and writes the evolutionary steps of 
         # post history into posthistoryevolution 
-        self.posthistory_evolution()
+        #self.posthistory_evolution()
     
     def postblock_evolution(self):
         counter = 0
