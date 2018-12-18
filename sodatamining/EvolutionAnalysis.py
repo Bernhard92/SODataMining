@@ -7,6 +7,7 @@ Created on 17.12.2018
 import matplotlib.pyplot as plt
 import numpy as np
 from DBConnection import *
+import csv
 
 class EvolutionAnalysis(object):
     
@@ -15,8 +16,10 @@ class EvolutionAnalysis(object):
     compound = 19
     
 
-    def __init__(self):
-        self.dbc = DBConnection()
+    def __init__(self, localData=False):
+        
+        
+        self.dbc = StaticData() if localData else DBConnection()
         
         self.pId = 15942975
         self.closedpId = 8799764
@@ -27,13 +30,67 @@ class EvolutionAnalysis(object):
         self.acceptedId = 17261284
         
         
-        self.plot_graph_of(self.pId)
-        self.plot_graph_of(self.closedpId, True, True)
+        #self.plot_graph_of(self.pId)
+        #self.plot_graph_of(self.closedpId, True, True)
         
-        self.plot_graph_of(self.closedpId2, True)
-        self.plot_graph_of(self.closedpId3, True)
+        #self.plot_graph_of(self.closedpId2, True)
+        #self.plot_graph_of(self.closedpId3, True)
         
-        self.plot_graph_of(self.acceptedId, False, True)
+        #self.plot_graph_of(self.acceptedId, False, True)
+        
+        #self.plot_pHEntries('all', 1)
+        #self.plot_pHEntries('closed')
+        #self.plot_pHEntries('accepted')
+        #self.plot_pHEntries('closedAccepted')
+        
+        self.plot_his_depth_distr()
+        
+    def plot_pHEntries(self, set, delete=0):
+        """ plots the number of posthistory entries FOR EACH POST entry
+        set = all, closed, accepted, closedAccepted"""
+
+        
+        if set == 'all': posts = self.dbc.list_of_evolution_steps('asc')
+        elif set == 'closed': posts = self.dbc.list_of_closed_evolution_steps('asc')
+        elif set == 'accepted': posts = self.dbc.list_of_accepted_evolution_steps('asc')
+        elif set == 'closedAccepted': posts = self.dbc.list_of_closed_accepted_evolution_steps('asc')
+        
+        xAxis = len(posts)+1
+        hisVersions = []
+        
+        for post in posts:
+            #number of posthistory entries
+            hisVersions.append(post[0])
+        
+        #delete the last n elements
+        if(delete > 0): 
+            xAxis -= delete
+            del hisVersions[-delete]
+        
+        hisVersions_arr = np.array(hisVersions)
+        x = np.arange(1, xAxis, 1)   
+        plt.plot(x, hisVersions_arr, 'b.')
+        plt.show()
+        
+    def plot_his_depth_distr(self):
+        """plots the number of posts FOR EACH history DEPTH"""
+        
+        #get data from database
+        historyDis = self.dbc.get_history_depth_distr()
+        print historyDis
+        
+        xAxis = []
+        yAxis = []
+        
+        for entry in historyDis: 
+            xAxis.append(entry[0])
+            yAxis.append(entry[1])
+        
+        x = np.array(xAxis)
+        y = np.array(yAxis)
+        plt.bar(x,y)
+        plt.show()
+        
     
     def plot_graph_of(self, pId, closed=False, accepted=False):
         preds = self.dbc.get_all_predecessors(pId)
@@ -49,13 +106,10 @@ class EvolutionAnalysis(object):
             comp.append(pred[self.compound])
         
         #The post got closed at some point   
-        if closed:
-            closedPos = self.get_closed_position(preds, self.dbc.get_closed_date(pId)[0])
+        if closed: closedPos = self.get_closed_position(preds, self.dbc.get_closed_date(pId)[0])
             
         #The post got accepted at some point
-        if accepted: 
-            acceptedPos = self.get_accepted_postition(preds, pId)
-            print acceptedPos
+        if accepted: acceptedPos = self.get_accepted_postition(preds, pId)
                     
         plt.figure(1, figsize=(18,5))
         
@@ -128,5 +182,25 @@ class EvolutionAnalysis(object):
             pos += 1
         #the last version got accepted
         return pos-1 
+
+class StaticData():
+        
+        def get_history_depth_distr(self):
+            """number of history entrys, number of 
+            posts with the number of history entries"""
+            
+            file = open("../Texts/depth_distr_all.csv", "rb")
+            reader = csv.reader(file)
+            
+            data = []
+            for row in reader:
+                t = (int(row[0]), int(row[1]))                
+                data.append(t)
+            
+            #print data
+            return data
+
+
+
 if __name__ == '__main__': 
-    eA = EvolutionAnalysis()
+    eA = EvolutionAnalysis(True)

@@ -501,14 +501,15 @@ class DBConnection:
         finally:
             return result 
         
-    def list_of_evolution_steps(self):
+    def list_of_evolution_steps(self, order='desc'):
         """returns postid and number of nodes in evolution table
         with the most evolution steps on top"""
+        
         query = """select count(*), postid 
                 from posthistory
                 where PostHistoryTypeId in (2,5,8)
                 group by PostId
-                order by count(*) desc"""
+                order by count(*)""" + order
              
         try: 
             cursor = self.conn.cursor()
@@ -519,7 +520,7 @@ class DBConnection:
         finally:
             return result 
         
-    def list_of_closed_evolution_steps(self):
+    def list_of_closed_evolution_steps(self, order='desc'):
         """returns postid and number of nodes in evolution table
         with the most evolution steps depth on top"""
         query = """select count(*), h.postid 
@@ -528,8 +529,7 @@ class DBConnection:
                 and h.postid = p.id
                 and p.ClosedDate is not null
                 group by h.PostId
-                order by count(*) desc
-                """
+                order by count(*)""" + order
              
         try: 
             cursor = self.conn.cursor()
@@ -540,7 +540,7 @@ class DBConnection:
         finally:
             return result
         
-    def list_of_accepted_evolution_steps(self):
+    def list_of_accepted_evolution_steps(self, order='desc'):
         """returns postid and number of nodes in evolution table
         with the most evolution steps depth on top"""
         query = """select count(*), h.postid 
@@ -549,8 +549,28 @@ class DBConnection:
                 and h.postid = p.id
                 and p.AcceptedAnswerId != 0
                 group by h.PostId
-                order by count(*) desc
-                """
+                order by count(*)""" + order
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
+    def list_of_closed_accepted_evolution_steps(self, order='desc'):
+        """returns postid and number of nodes in evolution table
+        with the most evolution steps depth on top"""
+        query = """select count(*), h.postid 
+                from posthistory h, posts p
+                where h.PostHistoryTypeId in (2,5,8)
+                and h.postid = p.id
+                and p.AcceptedAnswerId != 0
+                and p.ClosedDate is not null
+                group by h.PostId
+                order by count(*)""" + order
              
         try: 
             cursor = self.conn.cursor()
@@ -619,6 +639,26 @@ class DBConnection:
             print e 
         finally:
             return result
+        
+    def get_history_depth_distr(self):
+        query = """SELECT cnt as depth, count(*) as n
+                FROM (
+                    select count(*) as cnt
+                    from posthistory 
+                    where PostHistoryTypeId in (2,5,8)
+                    group by postid) as grp
+                GROUP BY cnt
+                ORDER BY n desc, cnt asc;"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
     
     """
         Operational stuff
