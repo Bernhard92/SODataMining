@@ -425,6 +425,202 @@ class DBConnection:
             cursor.close()
     
     """
+    Posthistoryevolution analysis
+    
+    """
+    
+    def get_closed_posts_stats(self):
+        """Count ocurence of changeTyps of closed posts"""
+        query = """SELECT count(1), e.changeType
+                FROM posthistoryevolution e, posts p, posthistory h
+                WHERE e.PostHistoryId = h.Id
+                AND h.PostId = p.id
+                AND p.ClosedDate is not NULL 
+                GROUP BY e.ChangeType"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result 
+        
+    def get_open_posts_stats(self):
+        """Count ocurence of changeTyps of open posts"""
+        query = """SELECT count(1), e.changeType
+                FROM posthistoryevolution e, posts p, posthistory h
+                WHERE e.PostHistoryId = h.Id
+                AND h.PostId = p.id
+                AND p.ClosedDate is NULL 
+                GROUP BY e.ChangeType"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result 
+        
+    def get_not_accepted_posts_stats(self):
+        """Count ocurence of changeTyps of closed posts"""
+        query = """SELECT count(1), e.changeType
+                FROM posthistoryevolution e, posts p, posthistory h
+                WHERE e.PostHistoryId = h.Id
+                AND h.PostId = p.id
+                AND p.AcceptedAnswerId = 0
+                GROUP BY e.ChangeType"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result 
+        
+    def get_accepted_posts_stats(self):
+        """Count ocurence of changeTyps of open posts"""
+        query = """SELECT count(1), e.changeType
+                FROM posthistoryevolution e, posts p, posthistory h
+                WHERE e.PostHistoryId = h.Id
+                AND h.PostId = p.id
+                AND p.AcceptedAnswerId != 0 
+                GROUP BY e.ChangeType"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result 
+        
+    def list_of_evolution_steps(self):
+        """returns postid and number of nodes in evolution table
+        with the most evolution steps on top"""
+        query = """select count(*), postid 
+                from posthistory
+                where PostHistoryTypeId in (2,5,8)
+                group by PostId
+                order by count(*) desc"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result 
+        
+    def list_of_closed_evolution_steps(self):
+        """returns postid and number of nodes in evolution table
+        with the most evolution steps depth on top"""
+        query = """select count(*), h.postid 
+                from posthistory h, posts p
+                where h.PostHistoryTypeId in (2,5,8)
+                and h.postid = p.id
+                and p.ClosedDate is not null
+                group by h.PostId
+                order by count(*) desc
+                """
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
+    def list_of_accepted_evolution_steps(self):
+        """returns postid and number of nodes in evolution table
+        with the most evolution steps depth on top"""
+        query = """select count(*), h.postid 
+                from posthistory h, posts p
+                where h.PostHistoryTypeId in (2,5,8)
+                and h.postid = p.id
+                and p.AcceptedAnswerId != 0
+                group by h.PostId
+                order by count(*) desc
+                """
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
+    def get_all_predecessors(self, pId):
+        """gets all entries from posthistorytable order by creation date"""
+        query = """select * 
+                from posthistory
+                where postid = """ + str(pId)+ """
+                and PostHistoryTypeId in (2,5,8)
+                order by CreationDate asc"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result 
+        
+    def get_closed_date(self, pId):
+        query = """select closedDate
+                from posts
+                where id = """ + str(pId)
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
+    def get_post_with_id(self, pId):
+        query = """select *
+                from posts
+                where id = """ + str(pId)
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+    
+    def get_answer_with_id(self, pId):
+        query = """select *
+                from acceptedanswers
+                where id = """ + str(pId)
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+    
+    """
         Operational stuff
         
     """
@@ -469,6 +665,7 @@ class DBConnection:
             print e
         finally:
             cursor.close()
+            
             
     def create_indices(self):
         query = """USE `sotorrent18_09`;

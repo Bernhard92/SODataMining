@@ -125,6 +125,7 @@ public class PostsToDB {
 							statement.setInt(20, 0);
 						else
 							statement.setInt(20, Integer.parseInt(row.getField(19)));
+						
 						if (row.getField(20).equals("NULL"))
 							statement.setString(21, "1000-01-01");
 						else
