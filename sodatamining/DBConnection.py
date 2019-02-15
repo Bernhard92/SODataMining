@@ -658,8 +658,158 @@ class DBConnection:
             print e 
         finally:
             return result
+    
+    def get_history_depth_accepted_distr(self):
+        query = """SELECT cnt as depth, count(*) as n
+                FROM (
+                    select count(*) as cnt
+                    from posthistory h, posts p
+                    where h.PostHistoryTypeId in (2,5,8)
+                    and p.id = h.PostId
+                    and p.AcceptedAnswerId != 0
+                    group by postid) as grp
+                GROUP BY cnt
+                ORDER BY n desc, cnt asc;"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
+    def get_history_depth_closed_distr(self):
+        query = """SELECT cnt as depth, count(*) as n
+                FROM (
+                    select count(*) as cnt
+                    from posthistory h, posts p
+                    where h.PostHistoryTypeId in (2,5,8)
+                    and p.id = h.PostId
+                    and p.ClosedDate IS NOT NULL
+                    group by postid) as grp
+                GROUP BY cnt
+                ORDER BY n desc, cnt asc;"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
+    def get_postids_of_post_with_depth(self, depth):
+        query = """select postid
+                from (
+                    select count(*) as n, h.postid 
+                    from posthistory h
+                    where h.PostHistoryTypeId in (2,5,8)
+                    group by h.PostId
+                ) as alias
+                Where alias.n = """ + str(depth) 
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+    
+    def get_postids_from_posts_with_acc_answer_gone(self):
+        """Gets the post ids from posts with more than one version
+        which have accepted answers"""
+        query = """select postid
+                from (
+                    select count(*) as n, h.postid 
+                    from posthistory h
+                    where h.PostHistoryTypeId in (2,5,8)
+                    group by h.PostId
+                ) as alias, posts p
+                Where alias.n != 1 
+                and postid = p.id
+                and p.AcceptedAnswerId != 0"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
+        
+    def get_postids_from_posts_with_nacc_answer_gone(self):
+        """Gets the post ids from posts with more than one version
+        which have no accepted answers"""
+        query = """select postid
+                from (
+                    select count(*) as n, h.postid 
+                    from posthistory h
+                    where h.PostHistoryTypeId in (2,5,8)
+                    group by h.PostId
+                ) as alias, posts p
+                Where alias.n != 1 
+                and postid = p.id
+                and p.AcceptedAnswerId = 0"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
         
     
+    def get_open_posts_gone(self):
+        query = """select postid
+                from (
+                    select count(*) as n, h.postid 
+                    from posthistory h
+                    where h.PostHistoryTypeId in (2,5,8)
+                    group by h.PostId
+                ) as alias, posts p
+                Where alias.n != 1 
+                and postid = p.id
+                and p.closedDate IS NULL"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
+    def get_closed_posts_gone(self):
+        query = """select postid, closeddate
+                from (
+                    select count(*) as n, h.postid 
+                    from posthistory h
+                    where h.PostHistoryTypeId in (2,5,8)
+                    group by h.PostId
+                ) as alias, posts p
+                Where alias.n != 1 
+                and postid = p.id
+                and p.closedDate IS NOT NULL"""
+             
+        try: 
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+        except Error as e: 
+            print e 
+        finally:
+            return result
+        
     """
         Operational stuff
         

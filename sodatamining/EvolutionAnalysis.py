@@ -29,23 +29,36 @@ class EvolutionAnalysis(object):
         
         self.acceptedId = 17261284
         
+        #depth: 40, getting better over time 
+        #self.plot_graph_of(35538254)
+        
+        #depth: 47, getting better first, but then falling down
+        #self.plot_graph_of(46894118)
+
+        #self.plot_graph_of(31713373)
+        #self.plot_graph_of(45282755)
         
         #self.plot_graph_of(self.pId)
-        #self.plot_graph_of(self.closedpId, True, True)
+        #self.plot_graph_of(self.closedpId)
         
-        #self.plot_graph_of(self.closedpId2, True)
-        #self.plot_graph_of(self.closedpId3, True)
+        #self.plot_graph_of(self.closedpId2)
+        #self.plot_graph_of(self.closedpId3)
         
-        #self.plot_graph_of(self.acceptedId, False, True)
+        #self.plot_graph_of(self.acceptedId)
         
-        #self.plot_pHEntries('all', 1)
+        #self.plot_pHEntries('all')
         #self.plot_pHEntries('closed')
         #self.plot_pHEntries('accepted')
         #self.plot_pHEntries('closedAccepted')
         
-        self.plot_his_depth_distr()
+        #self.plot_his_depth_distr('all')
+        #self.plot_his_depth_distr('closed')
+        #self.plot_his_depth_distr('accepted')
         
-    def plot_pHEntries(self, set, delete=0):
+
+        #self.plot_average_metrics(2)
+        
+    def plot_pHEntries(self, set):
         """ plots the number of posthistory entries FOR EACH POST entry
         set = all, closed, accepted, closedAccepted"""
 
@@ -61,23 +74,18 @@ class EvolutionAnalysis(object):
         for post in posts:
             #number of posthistory entries
             hisVersions.append(post[0])
-        
-        #delete the last n elements
-        if(delete > 0): 
-            xAxis -= delete
-            del hisVersions[-delete]
-        
+               
         hisVersions_arr = np.array(hisVersions)
         x = np.arange(1, xAxis, 1)   
         plt.plot(x, hisVersions_arr, 'b.')
         plt.show()
         
-    def plot_his_depth_distr(self):
+    def plot_his_depth_distr(self,set='all'):
         """plots the number of posts FOR EACH history DEPTH"""
-        
-        #get data from database
-        historyDis = self.dbc.get_history_depth_distr()
-        print historyDis
+               
+        if set == 'all': historyDis = self.dbc.get_history_depth_distr()
+        elif set == 'closed': historyDis = self.dbc.get_history_depth_closed_distr()
+        elif set == 'accepted': historyDis = self.dbc.get_history_depth_accepted_distr()
         
         xAxis = []
         yAxis = []
@@ -91,26 +99,62 @@ class EvolutionAnalysis(object):
         plt.bar(x,y)
         plt.show()
         
-    
-    def plot_graph_of(self, pId, closed=False, accepted=False):
-        preds = self.dbc.get_all_predecessors(pId)
         
+    def plot_graph_of(self, pId):
+        """Change of readability and sentiment over 
+        post version of the same post"""
+        preds = self.dbc.get_all_predecessors(pId)
         xAxis = len(preds)
+        
+        flesch, fog, comp = self.get_metric_history(pId)
+        #The post got closed at some point   
+        closed = True if self.dbc.get_closed_date(pId)[0] is not None else False
+        #The post got accepted at some point
+        accepted = True if self.dbc.get_post_with_id(pId)[2] != 0 else False
+       
+        self.draw_three_metrics(preds, xAxis, flesch, fog, comp, accepted, closed, pId)
+        
+        
+    def plot_average_metrics(self, depth):
+        """plots the average metrics of posts with the 
+        same depth"""
+        postIds = self.dbc.get_postids_of_post_with_depth(depth)
+        #print postIds
+        
+        xAxis = depth
         flesch = []
         fog = []
         comp = []
         
-        for pred in preds:
-            flesch.append(pred[self.flesch_reading_ease])
-            fog.append(pred[self.gunning_fog_index])
-            comp.append(pred[self.compound])
+        enitial = True
+        for postId in postIds:
+            if enitial: 
+                #Initial filling of the list
+                flesch, fog, comp = self.get_metric_history(postId[0])
+                enitial = False
+            else:
+                #Add the values of the other posts
+                print postId[0]
+                fl, fo, co = self.get_metric_history(postId[0])
+                for i in range(0, depth):
+                    flesch[i] += fl[i]
+                    fog[i] += fo[i]
+                    comp[i] += co[i] 
         
-        #The post got closed at some point   
-        if closed: closedPos = self.get_closed_position(preds, self.dbc.get_closed_date(pId)[0])
+        #divide by the number of posts           
+        for j in range(0, depth):
+            flesch[j] = flesch[j]/len(postIds)
+            fog[j] = fog[j]/len(postIds)
+            comp[j] = comp[j]/len(postIds)
             
-        #The post got accepted at some point
+        self.draw_three_metrics(None, xAxis, flesch, fog, comp, False, False, 0)
+        
+    
+    def draw_three_metrics(self, preds, xAxis, flesch, fog, comp, accepted, closed, pId):
+        
+        if closed: closedPos = self.get_closed_position(preds, self.dbc.get_closed_date(pId)[0])
         if accepted: acceptedPos = self.get_accepted_postition(preds, pId)
-                    
+        
         plt.figure(1, figsize=(18,5))
         
         """draw flesch reading ease graph"""
@@ -148,7 +192,22 @@ class EvolutionAnalysis(object):
         
         plt.suptitle('Post metrics:')
         plt.show()
+        
+    def get_metric_history(self, postId):
+        preds = self.dbc.get_all_predecessors(postId)
+        flesch = []
+        fog = []
+        comp = []
+        
+        for pred in preds:
+            flesch.append(pred[self.flesch_reading_ease])
+            fog.append(pred[self.gunning_fog_index])
+            comp.append(pred[self.compound])
+            
+        return flesch, fog, comp
+        
     
+        
     def get_closed_position(self, preds, closedDate):      
         """find the time span"""
         pos = 1
@@ -188,8 +247,22 @@ class StaticData():
         def get_history_depth_distr(self):
             """number of history entrys, number of 
             posts with the number of history entries"""
+            return self.read_data_from_file('depth_distr/depth_distr_all.csv')
+
+        def get_history_depth_accepted_distr(self):
+            """number of history entrys, number of 
+            posts with the number of history entries 
+            with an accepted answer"""
+            return self.read_data_from_file('depth_distr/depth_distr_accepted.csv')
             
-            file = open("../Texts/depth_distr_all.csv", "rb")
+        def get_history_depth_closed_distr(self):
+            """number of history entrys, number of 
+            posts with the number of history entries 
+            where the post is closed"""
+            return self.read_data_from_file('depth_distr/depth_distr_closed.csv')
+        
+        def read_data_from_file(self, file_name):
+            file = open("../Texts/Data/"+file_name, "rb")
             reader = csv.reader(file)
             
             data = []
@@ -199,8 +272,7 @@ class StaticData():
             
             #print data
             return data
-
-
+        
 
 if __name__ == '__main__': 
-    eA = EvolutionAnalysis(True)
+    eA = EvolutionAnalysis()
