@@ -19,7 +19,7 @@ class OpenDataAnalysis(object):
         
         #self.calc_open_diff()
         #self.calc_closed_diff()
-        """
+        
         self.box_plot(open("../Texts/Data/open/open_flesch_data.csv", "rb"), 
                       open("../Texts/Data/open/closed_flesch_data.csv", "rb"), 
                       "Flesch")
@@ -31,14 +31,16 @@ class OpenDataAnalysis(object):
         self.box_plot(open("../Texts/Data/open/open_sent_data.csv", "rb"), 
                       open("../Texts/Data/open/closed_sent_data.csv", "rb"), 
                       "Sentiment")
-        
+        """
         
         self.scatter_plot(open("../Texts/Data/open/open_flesch_data.csv", "rb"), 
                       open("../Texts/Data/open/closed_flesch_data.csv", "rb"))
         
         """
-        self.hist_plot(open("../Texts/Data/open/open_flesch_data.csv", "rb"), 
-                      open("../Texts/Data/open/closed_flesch_data.csv", "rb"))
+        #self.hist_plot(open("../Texts/Data/open/open_flesch_data.csv", "rb"), 
+                        #open("../Texts/Data/open/closed_flesch_data.csv", "rb"))
+                        
+        #self.count_closed_diff()
     
     def open_id(self):
         open_ip_file = open("../Texts/Data/open/open_id.csv", "wb")
@@ -188,7 +190,73 @@ class OpenDataAnalysis(object):
             flesch_diff = 0
             fog_diff = 0
             sentiment_diff = 0
+     
+    def count_closed_diff(self):
+        reader = csv.reader(open("../Texts/Data/open/closed_id.csv", "rb"))
+        
+        flesch_old = 0
+        fog_old = 0
+        sentiment_old = 0        
+        
+        flesch_diff = 0
+        fog_diff = 0
+        sentiment_diff = 0
+        
+        flesch_diff_total = 0
+        fog_diff_total = 0
+        sent_diff_total = 0
+        
+               
+        for row in reader:
+            closedDate = self.dbc.get_post_with_id(row[0])[20]
+            preds = self.dbc.get_all_predecessors(row[0])
             
+            
+            """readability"""
+            noValue = True
+            for pred in preds: 
+                if pred[12] != None and pred[4].date() < closedDate.date():
+                    if noValue:
+                        flesch_old = pred[12]
+                        fog_old = pred[13]
+                        noValue = False
+                    else:
+                        flesch_diff = flesch_diff + pred[12] - flesch_old
+                        flesch_old = pred[12]
+                        
+                        fog_diff = fog_diff + pred[13] - fog_old
+                        fog_old = pred[13]
+        
+            """sentiment"""
+            noValue = True
+            for pred in preds: 
+                if pred[19] != None and pred[4].date() < closedDate.date():
+                    if noValue:
+                        flesch_old = pred[19]
+                        noValue = False
+                    else:
+                        sentiment_diff = sentiment_diff + pred[19] - sentiment_old
+                        sentiment_old = pred[19]
+    
+                  
+            print "Flesch diff: ", flesch_diff
+            print "Fog diff: ", fog_diff
+            print "sent diff: ", sentiment_diff
+                    
+            if flesch_diff != 0:
+                flesch_diff_total += 1
+            if fog_diff != 0:
+                fog_diff_total += 1
+            if sentiment_diff != 0:
+                sent_diff_total += 1
+                                    
+            flesch_diff = 0
+            fog_diff = 0
+            sentiment_diff = 0
+            
+        print 'Flesch total diff: ', flesch_diff_total
+        print 'Fog total diff: ', fog_diff_total
+        print 'Sent total diff: ', sent_diff_total
             
     def box_plot(self, data_ac, data_nac, data_descr):
         ac_reader = csv.reader(data_ac)

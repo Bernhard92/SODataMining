@@ -24,10 +24,6 @@ class AcceptedDataAnalysis(object):
         self.id_file = open("../Texts/Data/accepted/acc_post_dpo.csv", "rb")
         
         self.changed_id_file = open("../Texts/Data/accepted/changed_id.csv", "rb")
-        #self.flesch_changed_file = open("../Texts/Data/flesch_changed_id.csv", "wb")
-        #self.fog_changed_file = open("../Texts/Data/fog_changed_id.csv", "wb")
-        #self.sent_changed_file = open("../Texts/Data/sent_changed_id.csv", "wb")
-        
         self.flesch_data_file = open("../Texts/Data/accepted/flesch_data.csv", "rb")
         self.fog_data_file = open("../Texts/Data/accepted/fog_data.csv", "rb")
         self.sent_data_file = open("../Texts/Data/accepted/sent_data.csv", "rb")
@@ -52,7 +48,9 @@ class AcceptedDataAnalysis(object):
         
        
             
-        #self.box_plot(self.flesch_data_file, self.nac_flesch_data_file, "Flesch")
+        self.box_plot(self.flesch_data_file, self.nac_flesch_data_file, "Flesch")
+        self.box_plot(self.fog_data_file, self.nac_fog_data_file, "Fog")
+        self.box_plot(self.sent_data_file, self.nac_sent_data_file, "Sentiment")
         
         
     
@@ -117,68 +115,7 @@ class AcceptedDataAnalysis(object):
             
         print self.not_changed_after_acc
         print self.changed_after_acc
-        
-       
-    def count_metric_changed(self):
-        reader = csv.reader(self.changed_id_file)
-        flesch_writer = csv.writer(self.flesch_changed_file)
-        fog_writer = csv.writer(self.fog_changed_file)
-        sent_writer = csv.writer(self.sent_changed_file)
-    
-            
-    
-        flesch_changed = False
-        fog_changed = False
-        s_changed = False
-        
-        flesch = 0
-        fog = 0
-        sentiment = 0
-        
-        fl = 0
-        fo = 0
-        se = 0
-        
-        for row in reader:
-            
-            question = self.dbc.get_post_with_id(row[0])
-            answerDate = self.dbc.get_answer_with_id(question[2])[4]
-            preds = self.dbc.get_all_predecessors(row[0])
-            
-            for pred in preds:
-                predDate = pred[4]
-                
-                if predDate.date() > answerDate.date():
-                    if pred[12] != flesch:
-                        flesch_changed = True
-                    if pred[13] != fog:
-                        fog_changed = True
-                    if pred[19] != sentiment:
-                        s_changed = True
-                        
-                else: 
-                    flesch = pred[12]
-                    fog = pred[13]
-                    sentiment = [19]
-                
-            if flesch_changed:
-                fl += 1     
-                flesch_changed = False
-                flesch_writer.writerow(row)
-            if fog_changed:
-                fo += 1
-                fog_changed = False
-                fog_writer.writerow(row)
-            if s_changed:
-                se += 1
-                s_changed = False
-                sent_writer.writerow(row)
-                
-
-        print "flesch", fl
-        print "fog ", fo
-        print "sent", se
-                
+                      
                 
     def calc_difference(self):
         reader = csv.reader(self.id_file)
