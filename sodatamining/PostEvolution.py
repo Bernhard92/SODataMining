@@ -12,7 +12,7 @@ class PostEvolution:
         
         # calculates and writes the evolutionary steps of the 
         # post blocks into postblockevolution 
-        self.postblock_evolution()
+        #self.postblock_evolution()
         
         # calculates and writes the evolutionary steps of 
         # post history into posthistoryevolution 
@@ -63,7 +63,7 @@ class PostEvolution:
         change_type = ''
         debugString = ''
             
-        """Flesch-Reading-Ease compairement"""
+        """Flesch-Reading-Ease comparison"""
         if entry[3] > predEntry[3]:
             # Higher score means easier to read
             change_type = 'readability_flesch_improved'

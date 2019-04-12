@@ -7,7 +7,6 @@ Created on 28.11.2018
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from DBConnection import *
 
-
 class Sentiment(object):
     
     '''
