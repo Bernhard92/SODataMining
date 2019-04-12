@@ -3,7 +3,7 @@ Created on 13.02.2019
 
 @author: bernhard
 '''
-from DBConnection import *
+from sodatamining.DBConnection import DBConnection
 import csv
 
 import matplotlib.pyplot as plt
@@ -21,12 +21,12 @@ class AcceptedDataAnalysis(object):
         self.dbc = DBConnection()
         
         """Accepted posts"""
-        self.id_file = open("../Texts/Data/accepted/acc_post_dpo.csv", "rb")
+        self.id_file = open("../Texts/Data/accepted/acc_post_dpo.csv", "r")
         
-        self.changed_id_file = open("../Texts/Data/accepted/changed_id.csv", "rb")
-        self.flesch_data_file = open("../Texts/Data/accepted/flesch_data.csv", "rb")
-        self.fog_data_file = open("../Texts/Data/accepted/fog_data.csv", "rb")
-        self.sent_data_file = open("../Texts/Data/accepted/sent_data.csv", "rb")
+        self.changed_id_file = open("../Texts/Data/accepted/changed_id.csv", "r")
+        self.flesch_data_file = open("../Texts/Data/accepted/flesch_data.csv", "r")
+        self.fog_data_file = open("../Texts/Data/accepted/fog_data.csv", "r")
+        self.sent_data_file = open("../Texts/Data/accepted/sent_data.csv", "r")
         
         #self.get_ids()
         #self.count_changed_after_acc()
@@ -36,11 +36,11 @@ class AcceptedDataAnalysis(object):
         #self.id_file.close()
         
         """Not accepted posts"""
-        self.nac_id_file = open("../Texts/Data/accepted/nacc_post_dpo.csv", "rb")
+        self.nac_id_file = open("../Texts/Data/accepted/nacc_post_dpo.csv", "r")
         
-        self.nac_flesch_data_file = open("../Texts/Data/accepted/nac_flesch_data.csv", "rb")
-        self.nac_fog_data_file = open("../Texts/Data/accepted/nac_fog_data.csv", "rb")
-        self.nac_sent_data_file = open("../Texts/Data/accepted/nac_sent_data.csv", "rb")
+        self.nac_flesch_data_file = open("../Texts/Data/accepted/nac_flesch_data.csv", "r")
+        self.nac_fog_data_file = open("../Texts/Data/accepted/nac_fog_data.csv", "r")
+        self.nac_sent_data_file = open("../Texts/Data/accepted/nac_sent_data.csv", "r")
         
         #self.get_nac_ids()
         #self.nac_calc_difference()
@@ -105,16 +105,16 @@ class AcceptedDataAnalysis(object):
                     self.changed_after_acc = self.changed_after_acc + 1
                     writer.writerow(row)
                 else: 
-                    print "######"
-                    print question
-                    print "######"
+                    print("######")
+                    print(question)
+                    print("######")
             else: 
-                print "------"
-                print question
-                print "------"
+                print ("------")
+                print (question)
+                print ("------")
             
-        print self.not_changed_after_acc
-        print self.changed_after_acc
+        print(self.not_changed_after_acc)
+        print(self.changed_after_acc)
                       
                 
     def calc_difference(self):
@@ -131,7 +131,7 @@ class AcceptedDataAnalysis(object):
         
         
         for row in reader:
-            print row[0]
+            print (row[0])
             question = self.dbc.get_post_with_id(row[0])
             answer = self.dbc.get_answer_with_id(question[2])
             
@@ -161,16 +161,16 @@ class AcceptedDataAnalysis(object):
                 for pred in preds: 
                     if pred[19] != None and pred[4].date() < answerDate.date():
                         if noValue:
-                            flesch_old = pred[19]
+                            sentiment_old = pred[19]
                             noValue = False
                         else:
                             sentiment_diff = sentiment_diff + pred[19] - sentiment_old
                             sentiment_old = pred[19]
         
                       
-                print "Flesch diff: ", flesch_diff
-                print "Fog diff: ", fog_diff
-                print "sent diff: ", sentiment_diff
+                print ("Flesch diff: ", flesch_diff)
+                print ("Fog diff: ", fog_diff)
+                print ("sent diff: ", sentiment_diff)
                         
                 self.flesch_data_file.write(str(flesch_diff))
                 self.flesch_data_file.write('\n')
@@ -197,7 +197,7 @@ class AcceptedDataAnalysis(object):
         sentiment_diff = 0
         
         for row in reader:
-            print row[0]
+            print (row[0])
             preds = self.dbc.get_all_predecessors(row[0])
             
             """readability"""
@@ -220,16 +220,16 @@ class AcceptedDataAnalysis(object):
             for pred in preds: 
                 if pred[19] != None:
                     if noValue:
-                        flesch_old = pred[19]
+                        sentiment_old = pred[19]
                         noValue = False
                     else:
                         sentiment_diff = sentiment_diff + pred[19] - sentiment_old
                         sentiment_old = pred[19]
             
                   
-            print "Flesch diff: ", flesch_diff
-            print "Fog diff: ", fog_diff
-            print "sent diff: ", sentiment_diff
+            print ("Flesch diff: ", flesch_diff)
+            print ("Fog diff: ", fog_diff)
+            print ("sent diff: ", sentiment_diff)
         
             self.nac_flesch_data_file.write(str(flesch_diff))
             self.nac_flesch_data_file.write('\n')
@@ -284,16 +284,16 @@ class AcceptedDataAnalysis(object):
         j = len(preds)-1
         while preds[j][12] == None and j > i: j-=1
         lastVersion = preds[j]
-        print firstVersion
+        print (firstVersion)
         
         
         flesch_diff = flesch_diff + lastVersion[12] - firstVersion[12]
         fog_diff = fog_diff + lastVersion[13] - firstVersion[13]
         sentiment_diff = sentiment_diff + lastVersion[19] - firstVersion[19]
         
-        print "Flesch diff: ", flesch_diff
-        print "Fog diff: ", fog_diff
-        print "sent diff: ", sentiment_diff
+        print ("Flesch diff: ", flesch_diff)
+        print ("Fog diff: ", fog_diff)
+        print ("sent diff: ", sentiment_diff)
         
         
         

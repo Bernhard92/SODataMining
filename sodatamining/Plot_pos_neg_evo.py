@@ -10,7 +10,7 @@ and negative of a given file, separated
 
 """
 
-flesch_data = open("../Texts/Data/accepted/flesch_data.csv", "r")
+flesch_data = open("../Texts/Data/accepted/sent_data.csv", "r")
 
 reader = csv.reader(flesch_data)
 
@@ -49,6 +49,7 @@ print(pos+neg+null)
 
 
 plt.figure(1, figsize=(12,5))
+
 plt.subplot(121)
 plt.ylabel("Change to positive")
 plt.boxplot(np.array(pos_values).astype(np.float), showfliers=False)
@@ -64,7 +65,7 @@ plt.show()
 
 
 
-flesch_data = open("../Texts/Data/accepted/nac_flesch_data.csv", "r")
+flesch_data = open("../Texts/Data/accepted/nac_sent_data.csv", "r")
 
 reader = csv.reader(flesch_data)
 
@@ -77,10 +78,11 @@ pos_values = []
 neg_values = []
 null_values = []
 
-
+flesch = []
 
 for line in reader:
     number = float(line[0])
+    flesch.append(number)
     if number > 0:
         pos += 1
         pos_values.append(number)
@@ -111,5 +113,10 @@ plt.ylabel("Change to negative")
 plt.boxplot(np.array(neg_values).astype(np.float), showfliers=False)
 plt.show()
 
-
+    
+plt.ylabel('number of occurrences')
+plt.xlabel('change of flesch score') 
+plt.hist(np.array(flesch), bins=np.arange(np.array(flesch).min(), np.array(flesch).max()+1),)
+plt.show()
+    
 

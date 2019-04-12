@@ -6,7 +6,7 @@ Created on 17.12.2018
 
 import matplotlib.pyplot as plt
 import numpy as np
-from DBConnection import *
+from .DBConnection import DBConnection
 import csv
 
 class EvolutionAnalysis(object):
@@ -134,7 +134,7 @@ class EvolutionAnalysis(object):
                 enitial = False
             else:
                 #Add the values of the other posts
-                print postId[0]
+                print(postId[0])
                 fl, fo, co = self.get_metric_history(postId[0])
                 for i in range(0, depth):
                     flesch[i] += fl[i]

@@ -22,10 +22,10 @@ class DBConnection:
                                            user='root',
                                            password=self.get_db_password())
             if conn.is_connected():
-                print 'Connected to MySQL database'
+                print('Connected to MySQL database')
             return conn
         except Error as e:
-            print e 
+            print(e) 
             
     def store_readability_metrics(self, id_, table, metrics):
         """ Stores the calculated metrics directly in the given table """
@@ -57,7 +57,7 @@ class DBConnection:
             self.conn.commit()
             
         except Error as e:
-            print e 
+            print(e) 
         
         finally:
             cursor.close()
@@ -69,7 +69,7 @@ class DBConnection:
             cursor.execute("SELECT COUNT(1) FROM " + self.db_name + "." + table + ";")
             result = cursor.fetchone()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result
@@ -92,7 +92,7 @@ class DBConnection:
             result = cursor.fetchall()
      
         except Error as e:
-            print e
+            print(e)
             
         finally:
             cursor.close()
@@ -115,7 +115,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result
@@ -133,7 +133,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result
@@ -165,7 +165,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result      
@@ -198,7 +198,7 @@ class DBConnection:
             self.conn.commit()
             
         except Error as e:
-            print e 
+            print(e) 
         
         finally:
             cursor.close()
@@ -224,7 +224,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result     
@@ -238,7 +238,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result 
@@ -258,7 +258,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result
@@ -281,7 +281,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result 
@@ -303,7 +303,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchone()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result 
@@ -325,7 +325,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchone()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result 
@@ -347,7 +347,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchone()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             return result 
@@ -386,7 +386,7 @@ class DBConnection:
             # accept the changes
             self.conn.commit()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
             
@@ -420,7 +420,7 @@ class DBConnection:
             # accept the changes
             self.conn.commit()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
     
@@ -443,7 +443,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result 
         
@@ -461,7 +461,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result 
         
@@ -479,7 +479,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result 
         
@@ -497,7 +497,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result 
         
@@ -516,7 +516,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result 
         
@@ -536,7 +536,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -556,7 +556,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -577,7 +577,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -594,7 +594,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result 
         
@@ -608,7 +608,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchone()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -622,7 +622,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchone()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
     
@@ -636,7 +636,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchone()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -655,7 +655,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
     
@@ -676,7 +676,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -697,7 +697,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -716,7 +716,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
     
@@ -739,7 +739,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -763,7 +763,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -785,7 +785,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -806,7 +806,7 @@ class DBConnection:
             cursor.execute(query)
             result = cursor.fetchall()
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             return result
         
@@ -837,7 +837,7 @@ class DBConnection:
             cursor.execute(query)
             self.conn.commit()
         except Error as e:
-            print e
+            print(e)
         finally:
             cursor.close()
             
@@ -852,7 +852,7 @@ class DBConnection:
             cursor.execute(query)
             self.conn.commit()
         except Error as e:
-            print e
+            print(e)
         finally:
             cursor.close()
             
@@ -899,7 +899,7 @@ class DBConnection:
             cursor = self.conn.cursor()
             cursor.execute(query)
         except Error as e: 
-            print e 
+            print(e) 
         finally:
             cursor.close()
         
@@ -919,7 +919,7 @@ class DBConnection:
                 cursor.execute(command)
                 self.conn.commit()
             except Error as e:
-                print e
+                print(e)
             finally:
                 cursor.close()
                     
