@@ -4,10 +4,10 @@ Created on 15.02.2019
 @author: bernhard
 '''
 
-from DBConnection import *
-import csv
+from .DBConnection import DBConnection
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
 
 class OpenDataAnalysis(object):
     
@@ -57,7 +57,7 @@ class OpenDataAnalysis(object):
         
         for post in closedPosts:
             preds = self.dbc.get_all_predecessors(post[0])
-            print post 
+            print (post) 
             closedDate = post[1]
             
             c = 0
@@ -114,9 +114,9 @@ class OpenDataAnalysis(object):
                         sentiment_old = pred[19]
             
                   
-            print "Flesch diff: ", flesch_diff
-            print "Fog diff: ", fog_diff
-            print "sent diff: ", sentiment_diff
+            print ("Flesch diff: ", flesch_diff)
+            print ("Fog diff: ", fog_diff)
+            print ("sent diff: ", sentiment_diff)
         
             open_flesch_data.write(str(flesch_diff))
             open_flesch_data.write('\n')
@@ -176,9 +176,9 @@ class OpenDataAnalysis(object):
                         sentiment_old = pred[19]
     
                   
-            print "Flesch diff: ", flesch_diff
-            print "Fog diff: ", fog_diff
-            print "sent diff: ", sentiment_diff
+            print ("Flesch diff: ", flesch_diff)
+            print ("Fog diff: ", fog_diff)
+            print ("sent diff: ", sentiment_diff)
                     
             closed_flesch_data.write(str(flesch_diff))
             closed_flesch_data.write('\n')
@@ -239,9 +239,9 @@ class OpenDataAnalysis(object):
                         sentiment_old = pred[19]
     
                   
-            print "Flesch diff: ", flesch_diff
-            print "Fog diff: ", fog_diff
-            print "sent diff: ", sentiment_diff
+            print ("Flesch diff: ", flesch_diff)
+            print ("Fog diff: ", fog_diff)
+            print ("sent diff: ", sentiment_diff)
                     
             if flesch_diff != 0:
                 flesch_diff_total += 1
@@ -254,9 +254,9 @@ class OpenDataAnalysis(object):
             fog_diff = 0
             sentiment_diff = 0
             
-        print 'Flesch total diff: ', flesch_diff_total
-        print 'Fog total diff: ', fog_diff_total
-        print 'Sent total diff: ', sent_diff_total
+        print ('Flesch total diff: ', flesch_diff_total)
+        print ('Fog total diff: ', fog_diff_total)
+        print ('Sent total diff: ', sent_diff_total)
             
     def box_plot(self, data_ac, data_nac, data_descr):
         ac_reader = csv.reader(data_ac)

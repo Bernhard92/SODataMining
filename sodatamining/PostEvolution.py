@@ -1,4 +1,5 @@
-from DBConnection import *
+from .DBConnection import DBConnection
+
 
 
 class PostEvolution:
@@ -36,7 +37,7 @@ class PostEvolution:
                 
             counter += 1
             if ((counter % 10000) == 0):
-                print str(counter) + " post blocks processed!"
+                print (str(counter) + " post blocks processed!")
                                 
     def posthistory_evolution(self):
         counter = 0
@@ -57,7 +58,7 @@ class PostEvolution:
                 
             counter += 1
             if ((counter % 10000) == 0):
-                print str(counter) + " history posts processed!"
+                print (str(counter) + " history posts processed!")
                     
     def evaluate_evolution(self, table, entry, predEntry):
         change_type = ''

@@ -3,7 +3,7 @@ Created on 14.12.2018
 
 @author: bernhard
 '''
-from DBConnection import *
+from .DBConnection import DBConnection
 
 class OpenClosed(object):
     '''
@@ -16,27 +16,23 @@ class OpenClosed(object):
         #create a text file to export calculated results 
         file = open("../Texts/open_closed_results.txt", "w")
         
-        print "------------"
+        print("------------")
         file.write("Closed posts:\n")
         results = dbc.get_closed_posts_stats()
         for result in results:
             file.write(str(result) + "\n")
-        print "###---------"
         file.write("\nOpen posts: \n")
         results = dbc.get_open_posts_stats()
         for result in results:
             file.write(str(result) + "\n")
-        print "######------"  
         file.write("\n\nNot accepted posts:\n")
         results = dbc.get_not_accepted_posts_stats()
         for result in results:
             file.write(str(result) + "\n")
-        print "#########---"
         file.write("\nAccepted posts: \n")
         results = dbc.get_accepted_posts_stats()
         for result in results:
             file.write(str(result)+"\n")
-        print "############"   
 
 
 if __name__=="__main__": 

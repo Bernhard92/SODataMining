@@ -18,7 +18,7 @@ class AcceptedDataAnalysis(object):
         self.readbility_changed = 0
         self.sentiment_changed = 0
         
-        self.dbc = DBConnection()
+        #self.dbc = DBConnection()
         
         """Accepted posts"""
         self.id_file = open("../Texts/Data/accepted/acc_post_dpo.csv", "r")

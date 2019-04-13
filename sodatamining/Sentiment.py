@@ -5,7 +5,8 @@ Created on 28.11.2018
 '''
 
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from DBConnection import *
+from .DBConnection import DBConnection
+
 
 class Sentiment(object):
     
@@ -59,7 +60,7 @@ class Sentiment(object):
               
             counter += 1
             if counter % 10000 == 0:
-                print str(counter) + ' statements executed!'
+                print (str(counter) + ' statements executed!')
         
     def posthistory_sentiment(self): 
         # adds the columns for the sentiment 
@@ -88,12 +89,12 @@ class Sentiment(object):
                     # Stores the metrics in the database
                     self.dbc.store_sentiment(id_[0], "posthistory", results)
             except UnboundLocalError:
-                print "No post block verion"
+                print ("No post block verion")
                 continue
             
             count += 1
             if count % 10000 == 0:
-                print str(count) + " statements executed!"
+                print (str(count) + " statements executed!")
                 
     def posts_sentiment(self):
         # adds the columns for the sentiment analysis to the posts table
@@ -105,7 +106,7 @@ class Sentiment(object):
         for result in results:
             count += 1
             if count % 10000 == 0:
-                print "10.000 querys executed!"
+                print ("10.000 querys executed!")
                 
             # post id
             id_ = result[0]
@@ -140,7 +141,7 @@ class Sentiment(object):
             
             count += 1
             if count % 10000 == 0: 
-                print str(count) + ' Comments done!'
+                print (str(count) + ' Comments done!')
             
         
     def calc_sentiment(self, text):    

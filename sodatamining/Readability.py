@@ -1,6 +1,5 @@
 import readability
-from DBConnection import *
-
+from .DBConnection import DBConnection
 
 class Readability:   
     
@@ -38,7 +37,7 @@ class Readability:
         
         # print("Calculating the metrics of: Id: "+ str(id_) +" Text: "+ text)
         try: 
-            return readability.getmeasures(unicode(text), lang='en')
+            return readability.getmeasures(text, lang='en')
         except ValueError:
             return 0
     
@@ -47,13 +46,13 @@ class Readability:
         return self._dbConnection.get_number_of_entries(table)[0]
 
     def print_readability_metrics(self, results):
-        print"Kinacaid: ", results['readability grades']['Kincaid']
-        print"ARI: ", results['readability grades']['ARI']
-        print"Coleman-Liau: ", results['readability grades']['Coleman-Liau']
-        print"Flesch reading ease: ", results['readability grades']['FleschReadingEase']
-        print"Gunning Fog Index: ", results['readability grades']['GunningFogIndex']
-        print"SMOG Index: ", results['readability grades']['SMOGIndex']
-        print"Dale-Chall: ", results['readability grades']['DaleChallIndex'], "\n" 
+        print("Kinacaid: ", results['readability grades']['Kincaid'])
+        print("ARI: ", results['readability grades']['ARI'])
+        print("Coleman-Liau: ", results['readability grades']['Coleman-Liau'])
+        print("Flesch reading ease: ", results['readability grades']['FleschReadingEase'])
+        print("Gunning Fog Index: ", results['readability grades']['GunningFogIndex'])
+        print("SMOG Index: ", results['readability grades']['SMOGIndex'])
+        print("Dale-Chall: ", results['readability grades']['DaleChallIndex'], "\n") 
       
     def postblockversion_readability(self):
         # alter posts table: add metric columns
@@ -102,7 +101,7 @@ class Readability:
                     #Stores the metrics in the database
                     self._dbConnection.store_readability_metrics(id_[0], "posthistory", results)
             except UnboundLocalError:
-                print "No post block verion"
+                print ("No post block verion")
                 continue
 
     def posts_readability(self):
@@ -114,7 +113,7 @@ class Readability:
         for result in results:
             count += 1
             if count % 10000 == 0:
-                print "10.000 querys executed!"
+                print ("10.000 querys executed!")
                 
             #post id
             id_ = result[0]
