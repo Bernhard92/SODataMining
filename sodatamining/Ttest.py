@@ -6,8 +6,8 @@ import csv
 from scipy.stats import ttest_ind
 
 
-flesch_data = open("../Texts/Data/accepted/sent_data.csv", "r")
-flesch_data_nac = open("../Texts/Data/accepted/nac_sent_data.csv", "r")
+flesch_data = open("../Texts/Data/open/open_sent_data.csv", "r")
+flesch_data_nac = open("../Texts/Data/open/closed_sent_data.csv", "r")
 
 
 flesch = []

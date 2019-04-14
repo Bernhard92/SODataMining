@@ -1,0 +1,44 @@
+Closed posts:
+(14792, u'readability_flesch_improved')
+(14706, u'readability_fog_improved')
+(9176, u'sentiment_com_improved')
+(17296, u'readability_flesch_aggravate')
+(14558, u'readability_fog_aggravate')
+(8932, u'sentiment_com_aggravate')
+(5916, u'readability_flesch_unchanged')
+(8740, u'readability_fog_unchanged')
+(19896, u'sentiment_com_unchanged')
+
+Open posts: 
+(297507, u'readability_flesch_aggravate')
+(293028, u'readability_fog_aggravate')
+(169235, u'sentiment_com_improved')
+(185566, u'sentiment_com_aggravate')
+(376166, u'readability_flesch_improved')
+(340905, u'readability_fog_improved')
+(477976, u'sentiment_com_unchanged')
+(159104, u'readability_flesch_unchanged')
+(198844, u'readability_fog_unchanged')
+
+
+Not accepted posts:
+(212734, u'readability_flesch_improved')
+(191079, u'readability_fog_improved')
+(95783, u'sentiment_com_improved')
+(165177, u'readability_flesch_aggravate')
+(164886, u'readability_fog_aggravate')
+(86376, u'readability_flesch_unchanged')
+(108322, u'readability_fog_unchanged')
+(263713, u'sentiment_com_unchanged')
+(104791, u'sentiment_com_aggravate')
+
+Accepted posts: 
+(149626, u'readability_flesch_aggravate')
+(142700, u'readability_fog_aggravate')
+(82628, u'sentiment_com_improved')
+(89707, u'sentiment_com_aggravate')
+(178224, u'readability_flesch_improved')
+(164532, u'readability_fog_improved')
+(234159, u'sentiment_com_unchanged')
+(78644, u'readability_flesch_unchanged')
+(99262, u'readability_fog_unchanged')

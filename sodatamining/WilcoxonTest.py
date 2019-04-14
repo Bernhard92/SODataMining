@@ -2,8 +2,8 @@ from scipy import stats
 import csv
 import numpy as np
 
-flesch_data = open("../Texts/Data/accepted/flesch_data.csv", "r")
-flesch_data_nac = open("../Texts/Data/accepted/nac_flesch_data.csv", "r")
+flesch_data = open("../Texts/Data/open/open_sent_data.csv", "r")
+flesch_data_nac = open("../Texts/Data/open/closed_sent_data.csv", "r")
 
 
 flesch = []
@@ -31,13 +31,13 @@ for line in reader2:
 
 
 
-#print(stats.mannwhitneyu(flesch, flesch_nac))
-print(flesch[:50])
-print(flesch_nac[:50])
+#print(flesch[:50])
+#print(flesch_nac[:50])
 
 data = np.array(flesch+flesch_nac)
 print(data)
 print(len(data))
+
 
 stat, p = stats.mannwhitneyu(flesch, flesch_nac)
 
@@ -48,3 +48,7 @@ if p > alpha:
     print('Same distribution (fail to reject H0)')
 else:
     print('Different distribution (reject H0)')
+    
+    
+    
+

@@ -6,7 +6,7 @@ Created on 17.12.2018
 
 import matplotlib.pyplot as plt
 import numpy as np
-from .DBConnection import DBConnection
+from sodatamining.DBConnection import DBConnection
 import csv
 
 class EvolutionAnalysis(object):

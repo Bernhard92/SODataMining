@@ -1,0 +1,22 @@
+﻿Notizen zu den akzeptierten/nicht akzeptierten Posts
+
+Posts mit akzeptierter Antwort: 	 516071
+Posts ohne akzeptierter Antwort: 	 614981
+Posts gesammt:				1131052
+
+
+Posts mit mehr als einer Version und akzeptierter Antwort und mind. zwei Versionen vor Akzeptierung: 	 50555			alt: 241537  
+Posts mit mehr als einer Version ohne akzeptierter Antwort:   						287925
+Posts mit mehr als einer, oder mehr als einer akzeptierten Version gesammt:		 		292092			alt: 529462
+
+mit akzeptierter Antwort: 
+Änderungen flesch:	44397	87,82%
+Änderungen fog:		43363	85,77%
+Änderungen sent: 	50426	99,74%
+
+
+ohne akzeptierter Antwort: 
+Änderungen flesch:	250341	86,95%
+Änderungen fog:		239142	83,06%
+Änderungen sent: 	286375	99,46%
+	   

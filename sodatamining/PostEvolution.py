@@ -1,5 +1,4 @@
-from .DBConnection import DBConnection
-
+from sodatamining.DBConnection import DBConnection
 
 
 class PostEvolution:

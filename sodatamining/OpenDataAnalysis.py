@@ -4,7 +4,7 @@ Created on 15.02.2019
 @author: bernhard
 '''
 
-from .DBConnection import DBConnection
+from sodatamining.DBConnection import DBConnection
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -20,27 +20,27 @@ class OpenDataAnalysis(object):
         #self.calc_open_diff()
         #self.calc_closed_diff()
         
-        self.box_plot(open("../Texts/Data/open/open_flesch_data.csv", "rb"), 
-                      open("../Texts/Data/open/closed_flesch_data.csv", "rb"), 
+        self.box_plot(open("../Texts/Data/open/open_flesch_data.csv", "r"), 
+                      open("../Texts/Data/open/closed_flesch_data.csv", "r"), 
                       "Flesch")
-        
-        self.box_plot(open("../Texts/Data/open/open_fog_data.csv", "rb"), 
-                      open("../Texts/Data/open/closed_fog_data.csv", "rb"), 
+         
+        self.box_plot(open("../Texts/Data/open/open_fog_data.csv", "r"), 
+                      open("../Texts/Data/open/closed_fog_data.csv", "r"), 
                       "Fog")
-        
-        self.box_plot(open("../Texts/Data/open/open_sent_data.csv", "rb"), 
-                      open("../Texts/Data/open/closed_sent_data.csv", "rb"), 
+         
+        self.box_plot(open("../Texts/Data/open/open_sent_data.csv", "r"), 
+                      open("../Texts/Data/open/closed_sent_data.csv", "r"), 
                       "Sentiment")
-        """
         
-        self.scatter_plot(open("../Texts/Data/open/open_flesch_data.csv", "rb"), 
-                      open("../Texts/Data/open/closed_flesch_data.csv", "rb"))
         
-        """
-        #self.hist_plot(open("../Texts/Data/open/open_flesch_data.csv", "rb"), 
-                        #open("../Texts/Data/open/closed_flesch_data.csv", "rb"))
-                        
-        #self.count_closed_diff()
+#         self.scatter_plot(open("../Texts/Data/open/open_flesch_data.csv", "r"), 
+#                       open("../Texts/Data/open/closed_flesch_data.csv", "r"))
+#         
+#         
+#         self.hist_plot(open("../Texts/Data/open/open_flesch_data.csv", "rb"), 
+#                         open("../Texts/Data/open/closed_flesch_data.csv", "rb"))
+#                         
+#         self.count_closed_diff()
     
     def open_id(self):
         open_ip_file = open("../Texts/Data/open/open_id.csv", "wb")
@@ -71,10 +71,10 @@ class OpenDataAnalysis(object):
     
     
     def calc_open_diff(self):
-        reader = csv.reader(open("../Texts/Data/open/open_id.csv", "rb"))
-        open_flesch_data = open("../Texts/Data/open/open_flesch_data.csv", "wb")
-        open_fog_data = open("../Texts/Data/open/open_fog_data.csv", "wb")
-        open_sent_data = open("../Texts/Data/open/open_sent_data.csv", "wb")
+        reader = csv.reader(open("../Texts/Data/open/open_id.csv", "r"))
+        open_flesch_data = open("../Texts/Data/open/open_flesch_data.csv", "w")
+        open_fog_data = open("../Texts/Data/open/open_fog_data.csv", "w")
+        open_sent_data = open("../Texts/Data/open/open_sent_data.csv", "w")
         
         flesch_old = 0
         fog_old = 0
@@ -107,7 +107,7 @@ class OpenDataAnalysis(object):
             for pred in preds: 
                 if pred[19] != None:
                     if noValue:
-                        flesch_old = pred[19]
+                        sentiment_old = pred[19]
                         noValue = False
                     else:
                         sentiment_diff = sentiment_diff + pred[19] - sentiment_old
@@ -130,10 +130,10 @@ class OpenDataAnalysis(object):
             sentiment_diff = 0
             
     def calc_closed_diff(self):
-        reader = csv.reader(open("../Texts/Data/open/closed_id.csv", "rb"))
-        closed_flesch_data = open("../Texts/Data/open/closed_flesch_data.csv", "wb")
-        closed_fog_data = open("../Texts/Data/open/closed_fog_data.csv", "wb")
-        closed_sent_data = open("../Texts/Data/open/closed_sent_data.csv", "wb")
+        reader = csv.reader(open("../Texts/Data/open/closed_id.csv", "r"))
+        closed_flesch_data = open("../Texts/Data/open/closed_flesch_data.csv", "w")
+        closed_fog_data = open("../Texts/Data/open/closed_fog_data.csv", "w")
+        closed_sent_data = open("../Texts/Data/open/closed_sent_data.csv", "w")
         
         flesch_old = 0
         fog_old = 0
@@ -150,6 +150,7 @@ class OpenDataAnalysis(object):
             
             
             """readability"""
+            
             noValue = True
             for pred in preds: 
                 if pred[12] != None and pred[4].date() < closedDate.date():
@@ -169,7 +170,7 @@ class OpenDataAnalysis(object):
             for pred in preds: 
                 if pred[19] != None and pred[4].date() < closedDate.date():
                     if noValue:
-                        flesch_old = pred[19]
+                        sentiment_old = pred[19]
                         noValue = False
                     else:
                         sentiment_diff = sentiment_diff + pred[19] - sentiment_old
@@ -275,11 +276,11 @@ class OpenDataAnalysis(object):
         
         ax = plt.subplot(121)
         plt.title('Open')
-        plt.boxplot(np.array(ac_data).astype(np.float))
+        plt.boxplot(np.array(ac_data).astype(np.float),showfliers=False)
         
         plt.subplot(122)
         plt.title('Closed')
-        plt.boxplot(np.array(nac_data).astype(np.float))
+        plt.boxplot(np.array(nac_data).astype(np.float),showfliers=False)
         
         plt.suptitle(data_descr)
         plt.show()

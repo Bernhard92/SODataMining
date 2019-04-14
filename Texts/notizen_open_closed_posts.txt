@@ -1,0 +1,15 @@
+﻿
+Geschlossene Posts mit mehr als einer Version, vor dem Schließungsdatum:	  7407		nur geschlossen: 21473
+Offene Posts mit mehr als einer Version:					507989
+
+Veränderungen vor dem Schließen:
+Flesch: 	6598		89,08%
+Fog: 		6345		85,66%
+Sentiment: 	7348		99,20%
+von: 		7407
+
+Veränderungen bei offenen Posts:
+Flesch: 	439684		86,55%
+Fog: 		418559		82,40%
+Sentiment:	505347		99,48%
+von:		507989

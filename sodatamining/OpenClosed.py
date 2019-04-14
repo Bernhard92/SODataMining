@@ -3,7 +3,7 @@ Created on 14.12.2018
 
 @author: bernhard
 '''
-from .DBConnection import DBConnection
+from sodatamining.DBConnection import DBConnection
 
 class OpenClosed(object):
     '''

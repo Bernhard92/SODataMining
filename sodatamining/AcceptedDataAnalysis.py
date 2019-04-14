@@ -260,10 +260,12 @@ class AcceptedDataAnalysis(object):
         
         ax = plt.subplot(121)
         plt.title('Has accepted answer')
+        plt.ylabel('score')
         plt.boxplot(np.array(ac_data).astype(np.float), showfliers=False)
         
         plt.subplot(122)
         plt.title('Has no accepted answer')
+        plt.ylabel('score')
         plt.boxplot(np.array(nac_data).astype(np.float), showfliers=False)
         
         plt.suptitle(data_descr)
